@@ -1,0 +1,56 @@
+#!/bin/sh
+
+IMAGE="lkieronski/arm-toolchain"
+NET_ID=$(docker network ls | awk '$0~net{print $1}' net=$IMAGE)
+USER="-u $(id -u)"
+VOLUME="-v $(pwd):/app"
+WORKDIR="-w /app"
+for p in 3333 4444 6666; do PORTS="$PORTS -p $p:$p"; done
+
+which docker >/dev/null || fail "Docker required"  
+[ -z "$NET_ID" ] && (docker network create $IMAGE >/dev/null || fail "Cant create network")
+
+usage() {
+    echo Help is on its way !
+    exit $1
+}
+
+fail() {
+    echo $1
+    exit 1
+}
+
+while [ "$1" != "" ]; do
+    PARAM=`echo $1 | awk -F= '/-+/{print $1}'`
+    VALUE=`echo $1 | awk -F= '/-+/{print $2}'`
+    case $PARAM in
+        -h | --help)
+            usage 
+            ;;
+        -o | --openocd)
+            shift 
+            docker run -it --rm --privileged $VOLUME $PORTS --network=$IMAGE --name openocd $WORKDIR $IMAGE openocd "$@"
+            exit $?
+            ;;
+        --interpreter)
+            # ugly trick for vscode c/c++ debug extension
+            CWD=`pwdx \`ps -o ppid= -p $$\` | awk '{print $2}'`
+            VOLUME="-v $CWD:/app"
+            docker run -i --rm --privileged $VOLUME --network=$IMAGE $WORKDIR $IMAGE gdb --interpreter=mi
+            exit $?
+            ;;
+        --gdb)
+            shift
+            docker run -i --rm --privileged $VOLUME --network=$IMAGE $WORKDIR $IMAGE gdb "$@"
+            exit $?
+            ;;
+        *)
+            [ -z "$PARAM" ] && break
+            echo "ERROR: unknown parameter \"$PARAM\""
+            usage 1
+            ;;
+    esac
+    shift
+done
+
+docker run -it --rm $VOLUME --network=$IMAGE $WORKDIR $IMAGE "$@"

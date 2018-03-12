@@ -1,0 +1,44 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Make",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "arm make -s -j4",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Program",
+            "type": "shell",
+            "command": "arm gdb -q -x program.gdb -ex quit ${config:arm.build.target} ",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenOCD",
+            "type": "shell",
+            "command": "arm --openocd",
+            "problemMatcher": [],
+            "isBackground": true,
+            "presentation": {
+                "echo": true,
+                "reveal": "never",
+                "focus": false,
+                "panel": "dedicated"
+            },
+            "promptOnClose": true
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "echo ${config:arm.build.target}"
+        }
+    ]
+}
