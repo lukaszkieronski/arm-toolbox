@@ -11,6 +11,12 @@
                 "isDefault": true
             },
             "command": "arm make -s -j4",
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
             "problemMatcher": [
                 "$gcc"
             ]
@@ -19,7 +25,13 @@
             "label": "Program",
             "type": "shell",
             "command": "arm gdb -q -x program.gdb -ex quit ${config:arm.build.target} ",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            }
         },
         {
             "label": "OpenOCD",
@@ -31,14 +43,10 @@
                 "echo": true,
                 "reveal": "never",
                 "focus": false,
-                "panel": "dedicated"
+                "panel": "shared"
             },
-            "promptOnClose": true
-        },
-        {
-            "label": "test",
-            "type": "shell",
-            "command": "echo ${config:arm.build.target}"
+            "promptOnClose": true,
+            "identifier": "openocd"
         }
     ]
 }

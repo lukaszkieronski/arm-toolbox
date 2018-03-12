@@ -1,0 +1,12 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    {
+        "key": "Ctrl+`",
+        "command":"workbench.action.terminal.focus",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+insert",
+        "command": "workbench.action.tasks.runTask"
+    }
+]
